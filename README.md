@@ -1,24 +1,13 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+### To run in terminal:
 
-Things you may want to cover:
+```
+rake "runner[{encode_message},{filename}]"
+```
 
-* Ruby version
+Parameters:
+  1. encode_message: string to be encode in qr code
+  2. filename: file name to be save
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+> Noted: The output will be saved as ./tmp/{name}.png
