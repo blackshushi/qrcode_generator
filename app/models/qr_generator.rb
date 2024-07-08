@@ -24,17 +24,21 @@ class QrGenerator
    end
   end
 
-  def generate_qr_code(dir,string)
+  def generate_qr_code(dir,string, name=nil)
     qr_code = RQRCode::QRCode.new(string)
 
-    IO.binwrite("#{dir}/#{string}.png", qr_code.as_png(size: 600))
+    if name == nil
+      name = string
+    end
+
+    IO.binwrite("#{dir}/#{name}.png", qr_code.as_png(size: 600))
   end
 
   def add_string_under_image(dir, qr_code_filename, string)
     img = Magick::Image.read("#{dir}/#{qr_code_filename}.png").first
-    
+
     img_string = Magick::Draw.new
-    img_string.annotate(img, 0, 0, -2, -2, string) do 
+    img_string.annotate(img, 0, 0, -2, -2, string) do
       self.font = 'helvetica'
       self.pointsize = 30
       self.gravity = Magick::SouthGravity
