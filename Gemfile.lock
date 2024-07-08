@@ -1601,6 +1601,7 @@ DEPENDENCIES
   jbuilder
   puma (~> 5.0)
   rails (~> 7.0.3)
+  rake
   redis (~> 4.0)
   rmagick
   roo

@@ -52,6 +52,7 @@ gem 'rmagick'
 gem 'rqrcode'
 gem 'roo'
 gem 'aws-sdk'
+gem 'rake'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
