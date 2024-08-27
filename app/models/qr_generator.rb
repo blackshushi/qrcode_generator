@@ -48,4 +48,9 @@ class QrGenerator
 
     img.write("#{dir}/#{qr_code_filename}.png")
   end
+
+  def generate_wifi_code(username, password)
+    qr_code_string = "WIFI:S:#{username};T:WPA;P:#{password};;"
+    generate_qr_code("tmp", qr_code_string, "wifi")
+  end
 end
