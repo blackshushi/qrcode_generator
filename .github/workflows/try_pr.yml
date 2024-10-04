@@ -1,6 +1,6 @@
 # This is a basic workflow that is manually triggered
 
-name: Manual workflow
+name: Test PR
 
 # Controls when the action will run. Workflow runs when manually triggered using the UI
 # or API.
@@ -36,4 +36,4 @@ jobs:
         commit-message: Push test.txt 
         delete-branch: true
         reviewers: blackshushi
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.TEST }}
