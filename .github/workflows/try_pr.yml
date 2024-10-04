@@ -36,4 +36,4 @@ jobs:
         commit-message: Push test.txt 
         delete-branch: true
         reviewers: blackshushi
-        token: ${{ secrets.TEST }}
+        token: ${{ secrets.GITHUB_TOKEN }}
