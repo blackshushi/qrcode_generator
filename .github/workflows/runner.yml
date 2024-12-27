@@ -5,42 +5,75 @@
 # This workflow will download a prebuilt Ruby version, install dependencies and run tests with Rake
 # For more information see: https://github.com/marketplace/actions/setup-ruby-jruby-and-truffleruby
 
-name: Run
+name: QR Code Generator Runner
 
 on:
   workflow_dispatch:
     inputs:
       message:
-        description: String to be encode
+        description: 'String to be encoded in QR code'
         required: true
         type: string
       filename:
-        description: output filename
+        description: 'Output filename (without extension)'
         required: true
         type: string
+      format:
+        description: 'Output format (png/svg)'
+        required: true
+        type: choice
+        default: 'png'
+        options:
+          - png
+          - svg
 
 permissions:
   contents: read
+  # Add if you need to upload artifacts
+  actions: write
 
 jobs:
-  test:
+  generate-qr:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         ruby-version: ["3.0.3"]
+      # Add fail-fast strategy
+      fail-fast: true
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Set up Ruby
-        # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
-        # change this to (see https://github.com/ruby/setup-ruby#versioning):
-        # uses: ruby/setup-ruby@v1
         uses: ruby/setup-ruby@55283cc23133118229fd3f97f9336ee23a179fcf # v1.146.0
         with:
           ruby-version: ${{ matrix.ruby-version }}
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-      - name: Run
-        run: bundle exec rake "runner[$message,$filename]"
+          bundler-cache: true
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libqrencode-dev
+
+      - name: Generate QR Code
+        id: generate
+        run: |
+          bundle exec rake "runner[${{ inputs.message }},${{ inputs.filename }}]"
         env:
-          message: "${{ inputs.message }}"
-          filename: "${{ inputs.filename }}"
+          MESSAGE: "${{ inputs.message }}"
+          FILENAME: "${{ inputs.filename }}"
+
+      - name: Upload QR Code
+        uses: actions/upload-artifact@v4
+        with:
+          name: qr-code
+          path: |
+            output/${{ inputs.filename }}.*
+          retention-days: 5
+          if-no-files-found: error
+
+      - name: Cleanup
+        if: always()
+        run: |
+          rm -rf output/*
