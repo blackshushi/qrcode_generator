@@ -1,0 +1,5 @@
+<%= turbo_stream.update "qr-preview" do %>
+  <div class="w-fit mx-auto bg-white rounded-lg shadow p-6">
+    <%= raw @qr_svg %>
+  </div>
+<% end %>

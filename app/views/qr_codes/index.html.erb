@@ -1,0 +1,19 @@
+<div class="container mx-auto max-w-3xl p-6">
+  <h1 class="text-3xl font-bold mb-6">QR Code Generator</h1>
+
+  <div id="qr-preview"></div>
+  </br>
+
+  <div class="bg-white rounded-lg shadow p-6">
+    <%= form_with(url: generate_qr_code_path, method: :post, local: true, class: "space-y-4") do |f| %>
+      <div>
+        <%= f.label :text, "Enter text for QR code", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_area :text, rows: 4, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Enter text or URL" %>
+      </div>
+
+      <div>
+        <%= f.submit "Generate QR Code", class: "inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
+      </div>
+    <% end %>
+  </div>
+</div>
