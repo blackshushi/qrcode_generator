@@ -3,7 +3,7 @@ task :runner, [:s, :name] => :environment do |t, args|
   g = QrGenerator.new
   s = args[:s]
   name = args[:name]
-  if name == ""
+  if name.nil? or name.empty?
     name = s
   end
 

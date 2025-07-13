@@ -27,7 +27,7 @@ class QrGenerator
   def generate_qr_code(dir,string, name=nil)
     qr_code = RQRCode::QRCode.new(string)
 
-    if name == nil
+    if name.nil?
       name = string
     end
 
