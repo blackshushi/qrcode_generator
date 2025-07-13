@@ -5,4 +5,5 @@ Rails.application.routes.draw do
   root "qr_codes#index"
 
   post '/generate', to: 'qr_codes#generate', as: :generate_qr_code
+  get '/download', to: 'qr_codes#download', as: :download_qr_code
 end

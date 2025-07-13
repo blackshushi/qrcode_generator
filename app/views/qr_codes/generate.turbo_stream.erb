@@ -1,5 +1,10 @@
 <%= turbo_stream.update "qr-preview" do %>
   <div class="w-fit mx-auto bg-white rounded-lg shadow p-6">
     <%= raw @qr_svg %>
+    <div class="mt-4 text-center space-y-2">
+      <%= link_to "Download QR Code", download_qr_code_path(text: @qr_code_text, title: @title), 
+                  class: "inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500",
+                  target: "_blank" %>
+    </div>
   </div>
 <% end %>
