@@ -38,7 +38,6 @@ jobs:
     strategy:
       matrix:
         ruby-version: ["3.0.3"]
-      # Add fail-fast strategy
       fail-fast: true
 
     steps:
@@ -46,34 +45,37 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Ruby
-        uses: ruby/setup-ruby@55283cc23133118229fd3f97f9336ee23a179fcf # v1.146.0
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
 
+      # rmagick needs ImageMagick headers/libs at compile time; rqrcode does not use libqrencode.
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libqrencode-dev
+          sudo apt-get install -y imagemagick libmagickwand-dev
 
+      # Rake writes to tmp/ (see lib/tasks/runner.rake); CI checkouts may not include tmp/.
       - name: Generate QR Code
         id: generate
         run: |
-          bundle exec rake "runner[${{ inputs.message }},${{ inputs.filename }}]"
+          mkdir -p tmp
+          bundle exec rake runner
         env:
-          MESSAGE: "${{ inputs.message }}"
-          FILENAME: "${{ inputs.filename }}"
+          MESSAGE: ${{ inputs.message }}
+          FILENAME: ${{ inputs.filename }}
+          QR_FORMAT: ${{ inputs.format }}
 
       - name: Upload QR Code
         uses: actions/upload-artifact@v4
         with:
           name: qr-code
-          path: |
-            output/${{ inputs.filename }}.*
+          path: tmp/${{ inputs.filename }}.*
           retention-days: 5
           if-no-files-found: error
 
       - name: Cleanup
         if: always()
         run: |
-          rm -rf output/*
+          rm -f "tmp/${{ inputs.filename }}.png" "tmp/${{ inputs.filename }}.svg"

@@ -24,14 +24,22 @@ class QrGenerator
    end
   end
 
-  def generate_qr_code(dir,string, name=nil)
+  def generate_qr_code(dir, string, name = nil, output_format: :png)
     qr_code = RQRCode::QRCode.new(string)
 
-    if name.nil?
-      name = string
-    end
+    name = string if name.nil?
 
-    IO.binwrite("#{dir}/#{name}.png", qr_code.as_png(size: 600))
+    if output_format.to_sym == :svg
+      svg = qr_code.as_svg(
+        offset: 0,
+        color: "000",
+        shape_rendering: "crispEdges",
+        module_size: 6
+      )
+      IO.binwrite("#{dir}/#{name}.svg", svg)
+    else
+      IO.binwrite("#{dir}/#{name}.png", qr_code.as_png(size: 600))
+    end
   end
 
   def add_string_under_image(dir, qr_code_filename, string)
