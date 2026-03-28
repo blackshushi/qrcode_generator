@@ -35,19 +35,15 @@ permissions:
 jobs:
   generate-qr:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        ruby-version: ["3.0.3"]
-      fail-fast: true
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Ruby version comes from .ruby-version (must be >= 3.1 for Bundler 2.6.x in Gemfile.lock)
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
 
       # rmagick needs ImageMagick headers/libs at compile time; rqrcode does not use libqrencode.
