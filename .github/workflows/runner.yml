@@ -40,17 +40,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # MUST run before ruby/setup-ruby: bundler-cache runs `bundle install`, and rmagick compiles
+      # against ImageMagick (MagickCore.pc from pkg-config).
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick libmagickwand-dev libmagickcore-dev pkg-config
+
       # Ruby version comes from .ruby-version (must be >= 3.1 for Bundler 2.6.x in Gemfile.lock)
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-
-      # rmagick needs ImageMagick headers/libs at compile time; rqrcode does not use libqrencode.
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y imagemagick libmagickwand-dev
 
       # Rake writes to tmp/ (see lib/tasks/runner.rake); CI checkouts may not include tmp/.
       - name: Generate QR Code
