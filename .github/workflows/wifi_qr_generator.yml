@@ -1,0 +1,62 @@
+name: Wifi QR Code Generator 
+
+on:
+  workflow_dispatch:
+    inputs:
+      username:
+        description: 'Your WiFi username'
+        required: true
+        type: string
+      password:
+        description: 'Your WiFi password'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  # Add if you need to upload artifacts
+  actions: write
+
+jobs:
+  generate-qr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # MUST run before ruby/setup-ruby: bundler-cache runs `bundle install`, and rmagick compiles
+      # against ImageMagick (MagickCore.pc from pkg-config).
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick libmagickwand-dev libmagickcore-dev pkg-config
+
+      # Ruby version comes from .ruby-version (must be >= 3.1 for Bundler 2.6.x in Gemfile.lock)
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      # Rake writes to tmp/ (see lib/tasks/runner.rake); CI checkouts may not include tmp/.
+      - name: Generate QR Code
+        id: generate
+        run: |
+          mkdir -p tmp
+          bundle exec rake wifi_qr_generator
+        env:
+          USERNAME: ${{ inputs.username }}
+          PASSWORD: ${{ inputs.password }}
+
+      - name: Upload QR Code
+        uses: actions/upload-artifact@v4
+        with:
+          name: wifi-qr-code
+          path: tmp/wifi_qr.png
+          retention-days: 5
+          if-no-files-found: error
+
+      - name: Cleanup
+        if: always()
+        run: |
+          rm -f "tmp/wifi_qr.png" 
