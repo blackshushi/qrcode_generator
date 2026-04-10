@@ -13,11 +13,11 @@ task :runner, [:s, :name] => :environment do |t, args|
   g.generate_qr_code("tmp", s, name, output_format: output_format)
 end
 
-task :wifi_qr_generator, [:username, :password] => :environment do |t, args|
+task :wifi_qr_generator, [:username, :password, :filename] => :environment do |t, args|
   g = QrGenerator.new
   username = ENV["USERNAME"].presence || args[:username]
   password = ENV["PASSWORD"].presence || args[:password]
+  filename = ENV["FILENAME"].presence || args[:filename]
 
-  wifi_code_string = g.generate_wifi_code(username, password)
-  g.generate_qr_code("tmp", wifi_code_string, "wifi_qr", output_format: :png)
+  g.generate_wifi_code(username, password, filename: filename)
 end
